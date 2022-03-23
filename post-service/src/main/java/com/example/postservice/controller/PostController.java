@@ -1,6 +1,7 @@
 package com.example.postservice.controller;
 
 import com.example.postservice.model.Post;
+import com.example.postservice.model.PutRequest;
 import com.example.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,11 @@ public class PostController {
     public ResponseEntity<Post> getPost(@PathVariable("postId") String postId) {
 
         return  new ResponseEntity<Post>(postService.getPost(postId), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/{postId}")
+    public ResponseEntity<Post> updatePosts(@PathVariable("postId") String postId,@RequestBody PutRequest putRequest){
+        return new ResponseEntity<Post>(postService.updatePosts(postId, putRequest), HttpStatus.OK);
     }
 
 }
