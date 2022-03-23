@@ -1,6 +1,7 @@
 package com.example.postservice.service;
 
 import com.example.postservice.model.Post;
+import com.example.postservice.model.PutRequest;
 import com.example.postservice.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,5 +31,14 @@ public class PostServiceImpl implements  PostService {
         return  postRepo.findAll();
     }
 
-
+    @Override
+    public Post updatePosts(String postId, PutRequest putRequest) {
+        Post post1 = postRepo.findByPostId(postId);
+        post1.setPost(putRequest.getPost());
+        post1.setPostId(putRequest.getPostId());
+        post1.setPostedBy(putRequest.getPostedBy());
+        post1.setUpdatedAt(LocalDateTime.now());
+        postRepo.save(post1);
+        return post1;
+    }
 }
