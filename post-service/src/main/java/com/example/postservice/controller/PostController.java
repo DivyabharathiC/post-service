@@ -5,10 +5,7 @@ import com.example.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path="/posts")
@@ -23,4 +20,11 @@ public class PostController {
     {
         return  new ResponseEntity<Post>(postService.createPost(post), HttpStatus.CREATED);
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<Post> getPost(@PathVariable("postId") String postId) {
+
+        return  new ResponseEntity<Post>(postService.getPost(postId), HttpStatus.OK);
+    }
+
 }
