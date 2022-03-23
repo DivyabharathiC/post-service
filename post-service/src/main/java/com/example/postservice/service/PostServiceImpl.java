@@ -14,4 +14,9 @@ public class PostServiceImpl implements  PostService {
     public Post createPost(Post post) {
         return postRepo.save(post) ;
     }
+
+    @Override
+    public Post getPost(String postId) {
+        return postRepo.findById(postId).get();
+    }
 }
