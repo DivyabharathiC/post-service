@@ -12,7 +12,7 @@ public interface FeignLike {
 
 
     @LoadBalanced
-        @GetMapping("/postsOrComments/{postOrCommentId}/likes/count")
+        @GetMapping("/api/v1/postsOrComments/{postOrCommentId}/likes/count")
          Integer getCount( @PathVariable("postOrCommentId") String postOrCommentId);
 
 
