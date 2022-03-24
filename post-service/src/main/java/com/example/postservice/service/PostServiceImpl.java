@@ -1,7 +1,12 @@
 package com.example.postservice.service;
 
+import com.example.postservice.Feign.FeignComment;
+import com.example.postservice.Feign.FeignLike;
+import com.example.postservice.Feign.FeignUser;
 import com.example.postservice.model.Post;
 import com.example.postservice.model.PutRequest;
+import com.example.postservice.model.Response;
+import com.example.postservice.model.User;
 import com.example.postservice.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,8 +23,19 @@ public class PostServiceImpl implements  PostService {
 
     @Autowired
     PostRepo postRepo;
+
+    @Autowired
+    private FeignComment feignComment;
+    @Autowired
+    private FeignLike feignLike;
+    @Autowired
+    private FeignUser feignUser;
+
+
     @Override
     public Post createPost(Post post) {
+        post.setCreatedAt(LocalDateTime.now());
+        post.setUpdatedAt(post.getCreatedAt());
         return postRepo.save(post) ;
     }
 
@@ -26,10 +43,24 @@ public class PostServiceImpl implements  PostService {
     public Post getPost(String postId) {
         return postRepo.findById(postId).get();
     }
+
     @Override
-    public List<Post> getPosts() {
-        return  postRepo.findAll();
+    public List<Response> getPosts() {
+        List<Post> posts= postRepo.findAll();
+        List<Response> responses=new ArrayList<>();
+
+        for(Post post:posts){
+            User user=feignUser.getUser(post.getPostedBy());
+            Integer commentCount=feignComment.getCommentCount(post.getPostId());
+            Integer likeCount=feignLike.getCount(post.getPostId());
+            System.out.println(commentCount+" "+likeCount);
+            responses.add(new Response(post.getPostId(),post.getPost(),
+                    user,post.getCreatedAt(),post.getUpdatedAt(),
+                    commentCount,likeCount));
     }
+        return  responses;
+    }
+
 
     @Override
     public Post updatePosts(String postId, PutRequest putRequest) {

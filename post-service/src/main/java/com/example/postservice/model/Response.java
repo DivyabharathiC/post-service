@@ -5,16 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class PutRequest {
+public class Response {
+
 
     private String postId;
     private String post;
-    private String postedBy;
+    private User postedBy;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer commentCounts;
+    private Integer likeCounts;
 
 }

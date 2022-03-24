@@ -2,20 +2,23 @@ package com.example.postservice.controller;
 
 import com.example.postservice.model.Post;
 import com.example.postservice.model.PutRequest;
+import com.example.postservice.model.Response;
 import com.example.postservice.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping(path="/posts")
+@RequestMapping(path="/api/v1/posts")
 public class PostController {
 
     @Autowired
     PostService postService;
 
-    @PostMapping(path="/post-new")
+    @PostMapping(path="")
 
     public ResponseEntity<Post> createPost(@RequestBody Post post)
     {
@@ -26,6 +29,12 @@ public class PostController {
     public ResponseEntity<Post> getPost(@PathVariable("postId") String postId) {
 
         return  new ResponseEntity<Post>(postService.getPost(postId), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "")
+    public ResponseEntity<List<Response>> getPosts() {
+
+        return  new ResponseEntity<List<Response>>(postService.getPosts(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{postId}")
