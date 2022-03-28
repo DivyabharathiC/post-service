@@ -15,6 +15,7 @@ import java.util.Date;
 @Document(collection = "Post")
 
 public class Post {
+
     @Id
     private String postId;
     private String post;

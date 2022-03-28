@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 @FeignClient(name="comment-service")
-public interface FeignComment {
+public interface CommentFeignClient {
 
     @LoadBalanced
     @GetMapping("/api/v1/posts/{postId}/comments/count")
-     int getCommentCount(@PathVariable("postId") String postId);
+     Integer getCommentCount(@PathVariable("postId") String postId);
 
 
 

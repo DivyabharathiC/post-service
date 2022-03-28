@@ -1,18 +1,14 @@
 package com.example.postservice.service;
 
-import com.example.postservice.Feign.FeignComment;
-import com.example.postservice.Feign.FeignLike;
-import com.example.postservice.Feign.FeignUser;
+import com.example.postservice.Feign.CommentFeignClient;
+import com.example.postservice.Feign.LikeFeignClient;
+import com.example.postservice.Feign.UserFeignClient;
+import com.example.postservice.dto.PostDTO;
 import com.example.postservice.model.Post;
-import com.example.postservice.model.PutRequest;
-import com.example.postservice.model.Response;
 import com.example.postservice.model.User;
 import com.example.postservice.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,52 +21,70 @@ public class PostServiceImpl implements  PostService {
     PostRepo postRepo;
 
     @Autowired
-    private FeignComment feignComment;
+    private CommentFeignClient commentFeignClient;
     @Autowired
-    private FeignLike feignLike;
+    private LikeFeignClient likeFeignClient;
     @Autowired
-    private FeignUser feignUser;
+    private UserFeignClient userFeignClient;
 
 
     @Override
-    public Post createPost(Post post) {
+    public PostDTO createPost(Post post) {
+
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(post.getCreatedAt());
-        return postRepo.save(post) ;
+        postRepo.save(post) ;
+
+        PostDTO postDTO= new PostDTO(post.getPostId(),post.getPost(),
+                userFeignClient.getUser(post.getPostedBy()),
+                post.getCreatedAt(),post.getUpdatedAt(),0,0);
+
+        return postDTO;
     }
 
     @Override
-    public Post getPost(String postId) {
-        return postRepo.findById(postId).get();
+    public PostDTO getPost(String postId) {
+        Post post = postRepo.findById(postId).get();
+
+        PostDTO postDTO= new PostDTO(post.getPostId(),post.getPost(),
+                userFeignClient.getUser(post.getPostedBy()),post.getCreatedAt(),post.getUpdatedAt(),
+                commentFeignClient.getCommentCount(post.getPostId()),
+                likeFeignClient.getCount(post.getPostId()));
+
+        return postDTO;
     }
 
     @Override
-    public List<Response> getPosts() {
+    public List<PostDTO> getPosts() {
         List<Post> posts= postRepo.findAll();
-        List<Response> responses=new ArrayList<>();
+        List<PostDTO> postDTOS=new ArrayList<>();
 
         for(Post post:posts){
-            User user=feignUser.getUser(post.getPostedBy());
-            Integer commentCount=feignComment.getCommentCount(post.getPostId());
-            Integer likeCount=feignLike.getCount(post.getPostId());
-            System.out.println(commentCount+" "+likeCount);
-            responses.add(new Response(post.getPostId(),post.getPost(),
+            User user= userFeignClient.getUser(post.getPostedBy());
+            Integer commentCount= commentFeignClient.getCommentCount(post.getPostId());
+            Integer likeCount= likeFeignClient.getCount(post.getPostId());
+//            System.out.println(commentCount+" "+likeCount);
+            postDTOS.add(new PostDTO(post.getPostId(),post.getPost(),
                     user,post.getCreatedAt(),post.getUpdatedAt(),
                     commentCount,likeCount));
     }
-        return  responses;
+        return  postDTOS;
     }
 
 
     @Override
-    public Post updatePosts(String postId, PutRequest putRequest) {
-        Post post1 = postRepo.findByPostId(postId);
-        post1.setPost(putRequest.getPost());
-        post1.setPostId(putRequest.getPostId());
-        post1.setPostedBy(putRequest.getPostedBy());
-        post1.setUpdatedAt(LocalDateTime.now());
-        postRepo.save(post1);
-        return post1;
+    public PostDTO updatePosts(String postId, Post post) {
+        post.setPostId(postId);
+        post.setCreatedAt(postRepo.findById(postId).get().getCreatedAt());
+        post.setUpdatedAt(LocalDateTime.now());
+        postRepo.save(post);
+
+        PostDTO postDTO= new PostDTO(post.getPostId(),post.getPost(),
+                userFeignClient.getUser(post.getPostedBy()),post.getCreatedAt(),post.getUpdatedAt(),
+                likeFeignClient.getCount(post.getPostId()),
+                commentFeignClient.getCommentCount(post.getPostId()));
+
+        return postDTO;
     }
 
     @Override

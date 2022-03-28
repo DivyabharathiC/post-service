@@ -13,10 +13,9 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class User {
 
-
+    @Id
     private String userId;
     private String firstName;
     private String middleName;
