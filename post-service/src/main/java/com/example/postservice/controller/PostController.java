@@ -1,6 +1,7 @@
 package com.example.postservice.controller;
 
 import com.example.postservice.dto.PostDTO;
+import com.example.postservice.exception.PostNotFoundException;
 import com.example.postservice.model.Post;
 import com.example.postservice.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.example.postservice.constant.Constant.PostNotFound;
 
 @Slf4j
 @RestController
@@ -34,13 +37,16 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostDTO> getPost(@PathVariable("postId") String postId) {
         logger.info("Starting of getPostbyid request from post application");
-        return  new ResponseEntity<PostDTO>(postService.getPost(postId), HttpStatus.OK);
+        return new ResponseEntity<PostDTO>(postService.getPost(postId), HttpStatus.OK);
+
     }
 
     @GetMapping(path = "")
     public ResponseEntity<List<PostDTO>> getPosts() {
+
         logger.info("Starting of getPosts request from post application");
-        return  new ResponseEntity<List<PostDTO>>(postService.getPosts(), HttpStatus.OK);
+
+        return new ResponseEntity<List<PostDTO>>(postService.getPosts(), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{postId}")
