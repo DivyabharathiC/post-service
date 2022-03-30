@@ -63,7 +63,7 @@ public class PostServiceImpl implements  PostService {
             User user= userFeignClient.getUser(post.getPostedBy());
             Integer commentCount= commentFeignClient.getCommentCount(post.getPostId());
             Integer likeCount= likeFeignClient.getCount(post.getPostId());
-//            System.out.println(commentCount+" "+likeCount);
+
             postDTOS.add(new PostDTO(post.getPostId(),post.getPost(),
                     user,post.getCreatedAt(),post.getUpdatedAt(),
                     commentCount,likeCount));
