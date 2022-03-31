@@ -4,6 +4,7 @@ import com.example.postservice.Feign.CommentFeignClient;
 import com.example.postservice.Feign.LikeFeignClient;
 import com.example.postservice.Feign.UserFeignClient;
 import com.example.postservice.dto.PostDTO;
+import com.example.postservice.exception.PostNotFoundException;
 import com.example.postservice.model.Post;
 import com.example.postservice.model.User;
 import com.example.postservice.repo.PostRepo;
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.postservice.constant.Constant.PostNotFound;
 
 @Service
 public class PostServiceImpl implements  PostService {
@@ -33,43 +36,56 @@ public class PostServiceImpl implements  PostService {
 
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(post.getCreatedAt());
-        postRepo.save(post) ;
+        postRepo.save(post);
 
-        PostDTO postDTO= new PostDTO(post.getPostId(),post.getPost(),
+        PostDTO postDTO = new PostDTO(post.getPostId(), post.getPost(),
                 userFeignClient.getUser(post.getPostedBy()),
-                post.getCreatedAt(),post.getUpdatedAt(),0,0);
+                post.getCreatedAt(), post.getUpdatedAt(), 0, 0);
 
         return postDTO;
     }
 
     @Override
     public PostDTO getPost(String postId) {
-        Post post = postRepo.findById(postId).get();
+        try {
+            Post post = postRepo.findById(postId).get();
 
-        PostDTO postDTO= new PostDTO(post.getPostId(),post.getPost(),
-                userFeignClient.getUser(post.getPostedBy()),post.getCreatedAt(),post.getUpdatedAt(),
-                commentFeignClient.getCommentCount(post.getPostId()),
-                likeFeignClient.getCount(post.getPostId()));
+            PostDTO postDTO = new PostDTO(post.getPostId(), post.getPost(),
+                    userFeignClient.getUser(post.getPostedBy()), post.getCreatedAt(), post.getUpdatedAt(),
+                    commentFeignClient.getCommentCount(post.getPostId()),
+                    likeFeignClient.getCount(post.getPostId()));
 
-        return postDTO;
+            return postDTO;
+        } catch (Exception e) {
+            throw new PostNotFoundException(PostNotFound);
+        }
     }
 
     @Override
     public List<PostDTO> getPosts() {
-        List<Post> posts= postRepo.findAll();
-        List<PostDTO> postDTOS=new ArrayList<>();
 
-        for(Post post:posts){
-            User user= userFeignClient.getUser(post.getPostedBy());
-            Integer commentCount= commentFeignClient.getCommentCount(post.getPostId());
-            Integer likeCount= likeFeignClient.getCount(post.getPostId());
+            List<Post> posts = postRepo.findAll();
+            if (posts.isEmpty()) {
+                throw new PostNotFoundException( PostNotFound);
+            }
 
-            postDTOS.add(new PostDTO(post.getPostId(),post.getPost(),
-                    user,post.getCreatedAt(),post.getUpdatedAt(),
-                    commentCount,likeCount));
-    }
-        return  postDTOS;
-    }
+                List<PostDTO> postDTOS = new ArrayList<>();
+
+                for (Post post : posts) {
+                    User user = userFeignClient.getUser(post.getPostedBy());
+                    Integer commentCount = commentFeignClient.getCommentCount(post.getPostId());
+                    Integer likeCount = likeFeignClient.getCount(post.getPostId());
+                    postDTOS.add(new PostDTO(post.getPostId(), post.getPost(),
+                            user, post.getCreatedAt(), post.getUpdatedAt(),
+                            commentCount, likeCount));
+                }
+                return postDTOS;
+            }
+
+
+
+
+
 
 
     @Override
