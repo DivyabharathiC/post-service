@@ -9,11 +9,15 @@ import com.example.postservice.model.Post;
 import com.example.postservice.model.User;
 import com.example.postservice.repo.PostRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.postservice.constant.Constant.PostNotFound;
 
@@ -62,9 +66,12 @@ public class PostServiceImpl implements  PostService {
     }
 
     @Override
-    public List<PostDTO> getPosts() {
+    public List<PostDTO> getPosts(Integer page, Integer size) {
+        page = Optional.ofNullable(page).orElse(0);
+        size = Optional.ofNullable(size).orElse(10);
+        Pageable paging = PageRequest.of(page, size);
 
-            List<Post> posts = postRepo.findAll();
+        Page<Post> posts = postRepo.findAll(paging);
             if (posts.isEmpty()) {
                 throw new PostNotFoundException( PostNotFound);
             }

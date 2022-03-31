@@ -42,11 +42,12 @@ public class PostController {
     }
 
     @GetMapping(path = "")
-    public ResponseEntity<List<PostDTO>> getPosts() {
+    public ResponseEntity<List<PostDTO>> getPosts(@RequestParam(value = "page", required = false) Integer page,
+                                                  @RequestParam(value = "size", required = false) Integer size) {
 
         logger.info("Starting of getPosts request from post application");
 
-        return new ResponseEntity<List<PostDTO>>(postService.getPosts(), HttpStatus.OK);
+        return new ResponseEntity<List<PostDTO>>(postService.getPosts(page, size), HttpStatus.OK);
     }
 
     @PutMapping(path = "/{postId}")

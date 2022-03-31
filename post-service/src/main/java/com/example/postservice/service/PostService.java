@@ -12,11 +12,12 @@ public interface PostService {
 
     PostDTO getPost(String postId);
 
-    List<PostDTO> getPosts();
+    
 
     PostDTO updatePosts(String postId, Post post);
 
     String deletePost(String postId);
 
 
+    List<PostDTO> getPosts(Integer page, Integer size);
 }
