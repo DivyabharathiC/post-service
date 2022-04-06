@@ -20,4 +20,6 @@ public interface PostService {
 
 
     List<PostDTO> getPosts(Integer page, Integer size);
+
+
 }
