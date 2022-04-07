@@ -12,8 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class ApiError {
-    private LocalDateTime timestamp;
-    private HttpStatus status;
-    private List<String> errors;
     private String path;
+    private String code;
+    private String message;
 }

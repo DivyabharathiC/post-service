@@ -1,7 +1,6 @@
 package com.example.postservice.controller;
 
 import com.example.postservice.dto.PostDTO;
-import com.example.postservice.exception.PostNotFoundException;
 import com.example.postservice.model.Post;
 import com.example.postservice.service.PostService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,9 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
-import static com.example.postservice.constant.Constant.POST_NOT_FOUND_EXCEPTION;
 
 @Slf4j
 @RestController
@@ -28,7 +27,7 @@ public class PostController {
 
     @PostMapping(path="")
 
-    public ResponseEntity<PostDTO> createPost(@RequestBody Post post)
+    public ResponseEntity<PostDTO> createPost(@RequestBody @Valid Post post)
     {
         logger.info("Starting of createPost request from post application");
         return  new ResponseEntity<PostDTO>(postService.createPost(post), HttpStatus.CREATED);

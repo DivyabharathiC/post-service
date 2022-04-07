@@ -87,7 +87,6 @@ class PostControllerTest {
         userDetails.setEmployeeId("6802");
         userDetails.setBloodGroup("A+");
         userDetails.setEmail("divya@gmail.com");
-        userDetails.setPassword("divi123");
         userDetails.setAddress("Sirkali");
         return userDetails;
     }
