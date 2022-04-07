@@ -5,7 +5,6 @@ import com.example.postservice.Feign.LikeFeignClient;
 import com.example.postservice.Feign.UserFeignClient;
 import com.example.postservice.dto.PostDTO;
 import com.example.postservice.enums.Gender;
-import com.example.postservice.exception.PostNotFoundException;
 import com.example.postservice.model.Post;
 import com.example.postservice.model.User;
 import com.example.postservice.repo.PostRepo;
@@ -17,19 +16,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static com.example.postservice.constant.Constant.POST_NOT_FOUND_EXCEPTION;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -90,28 +86,6 @@ class PostServiceImplTest {
         Mockito.when(postRepo.save(post)).thenReturn(post);
         assertThat(postRepo.findById(post.getPostId())).isNotNull();
     }
-
-
-    private Post createOnePostToRequest() {
-        Post postRequest = new Post();
-        postRequest.setPost("post1");
-        postRequest.setPostedBy("postedbyrepo");
-        postRequest.setPostId("1");
-        return postRequest;
-    }
-
-    private PostDTO createOnePostToResponse() {
-        PostDTO postDto = new PostDTO();
-        postDto.setPostId("1");
-        postDto.setPost("Hi");
-        postDto.setPostedBy(userFeignClient.getUser("1"));
-        postDto.setCreatedAt(LocalDateTime.now());
-        postDto.setUpdatedAt(LocalDateTime.now());
-        postDto.setCommentCounts((Integer) commentFeignClient.getCommentCount("1"));
-        postDto.setLikeCounts((Integer) likeFeignClient.getCount("1"));
-        return null;
-    }
-
 
     private Post createPostRequest() {
         Post post = new Post();
@@ -188,28 +162,13 @@ class PostServiceImplTest {
         return lists;
     }
 
-
-    @Test
-        void updatePosts(){
-            Post post1 = createOnePost();
-            PostDTO postDto = createOnePostToResponse1();
-            Post postRequest = createOnePostToRequest();
-            Mockito.when(postRepo.findById("1")).thenReturn(Optional.ofNullable(post1));
-            assertThat(postService.updatePosts("1", postRequest)).isEqualTo(postDto);
-            assertThrows(PostNotFoundException.class, () -> postService.updatePosts("1", postRequest));
+        @Test
+        @DisplayName("validate get post details by post ID")
+        public void updatePosts() {
+            Post post = updatePostRequest();
+            Mockito.when(postRepo.findByPostId(post.getPostId())).thenReturn(post);
+            assertEquals(post, postRepo.findByPostId(post.getPostId()));
         }
 
 
-
-    private PostDTO createOnePostToResponse1() {
-        PostDTO postDto = new PostDTO();
-        postDto.setPostId("1");
-        postDto.setPost("post1");
-        postDto.setPostedBy(userFeignClient.getUser("1"));
-        postDto.setCreatedAt(LocalDateTime.now());
-        postDto.setUpdatedAt(LocalDateTime.now());
-        postDto.setCommentCounts(commentFeignClient.getCommentCount("1"));
-        postDto.setLikeCounts(likeFeignClient.getCount("1"));
-        return postDto;
-    }
 }
