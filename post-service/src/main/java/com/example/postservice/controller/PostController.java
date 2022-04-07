@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.postservice.constant.Constant.PostNotFound;
+import static com.example.postservice.constant.Constant.POST_NOT_FOUND_EXCEPTION;
 
 @Slf4j
 @RestController

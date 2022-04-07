@@ -25,8 +25,7 @@ import java.util.Date;
 import java.util.List;
 
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -96,12 +95,11 @@ class PostControllerTest {
     @Test
     @DisplayName("Get all posts")
     public void getAllPosts() throws Exception {
-        Post response = createNewPostRequest();
+        Post request = createNewPostRequest();
         List<PostDTO> postLists = getListOfPosts();
-        PostDTO postDetails = createPostResponse();
         Mockito.when(postService.getPosts(1,2)).thenReturn(postLists);
         mockMvc.perform(get("/api/v1/posts/")
-                        .content(asJsonString(response))
+                        .content(asJsonString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -122,20 +120,52 @@ class PostControllerTest {
 
         return lists;
     }
+
+    private Post updatePostRequest() {
+        Post post = new Post();
+        post.setPost("post for update");
+        post.setPostedBy("778");
+        post.setPostId("123");
+        return post;
+    }
+
     @Test
     @DisplayName("Retrieve the Post details by Id")
     public void getPostByPostId() throws Exception {
-        Post response = createNewPostRequest();
-        PostDTO postDetails = createPostResponse();
-        Mockito.when(postService.getPost(response.getPostId())).thenReturn(postDetails);
+        Post postDetails = createNewPostRequest();
+        PostDTO response = createPostResponse();
+        Mockito.when(postService.getPost(postDetails.getPostId())).thenReturn(response);
         mockMvc.perform(get("/api/v1/posts/123")
-                        .content(asJsonString(response))
+                        .content(asJsonString(postDetails))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
 
+    @Test
+    @DisplayName("update Post test")
+    void updatePosts() throws Exception {
+            Post request = updatePostRequest();
+            PostDTO postDetails = createPostResponse();
+            Mockito.when(postService.updatePosts(request.getPostId(), request)).thenReturn(postDetails);
+            this.mockMvc.perform(put("/api/v1/posts/123")
+                            .content(asJsonString(request))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isOk());
+        }
 
 
+
+    @Test
+    void deletePost() throws Exception {
+        PostDTO postDetails = createPostResponse();
+        Mockito.when(postService.deletePost(postDetails.getPostId())).thenReturn(String.valueOf(true));
+        mockMvc.perform(delete("/api/v1/posts/100")
+                        .content(asJsonString(postDetails))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }

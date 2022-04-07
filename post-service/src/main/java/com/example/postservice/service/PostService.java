@@ -12,8 +12,6 @@ public interface PostService {
 
     PostDTO getPost(String postId);
 
-    
-
     PostDTO updatePosts(String postId, Post post);
 
     String deletePost(String postId);

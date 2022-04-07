@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.postservice.constant.Constant.PostNotFound;
+import static com.example.postservice.constant.Constant.POST_NOT_FOUND_EXCEPTION;
 
 @Service
 public class PostServiceImpl implements  PostService {
@@ -61,7 +61,7 @@ public class PostServiceImpl implements  PostService {
 
             return postDTO;
         } catch (Exception e) {
-            throw new PostNotFoundException(PostNotFound);
+            throw new PostNotFoundException(POST_NOT_FOUND_EXCEPTION);
         }
     }
 
@@ -73,7 +73,7 @@ public class PostServiceImpl implements  PostService {
 
         Page<Post> posts = postRepo.findAll(paging);
             if (posts.isEmpty()) {
-                throw new PostNotFoundException( PostNotFound);
+                throw new PostNotFoundException( POST_NOT_FOUND_EXCEPTION);
             }
 
                 List<PostDTO> postDTOS = new ArrayList<>();
