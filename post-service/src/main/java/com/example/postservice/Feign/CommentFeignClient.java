@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface CommentFeignClient {
 
     @LoadBalanced
-    @GetMapping("/api/v1/posts/{postId}/comments/count")
+    @GetMapping("/api/v1/post/{postId}/comments/count")
      Integer getCommentCount(@PathVariable("postId") String postId);
 
 
