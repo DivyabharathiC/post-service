@@ -75,13 +75,11 @@ class PostServiceImplTest {
     @DisplayName("validate create post")
     public void createPost() {
         Post postRequest = createPostRequest();
-        PostDTO postDTO = createPostResponse();
+
         Post post = new Post();
         post.setPost(postRequest.getPost());
         post.setPostId(postRequest.getPostId());
         post.setPostedBy(postRequest.getPostedBy());
-        post.setCreatedAt(LocalDateTime.now());
-        post.setCreatedAt(LocalDateTime.now());
 
         Mockito.when(postRepo.save(post)).thenReturn(post);
         assertThat(postRepo.findById(post.getPostId())).isNotNull();
@@ -89,6 +87,7 @@ class PostServiceImplTest {
 
     private Post createPostRequest() {
         Post post = new Post();
+
         post.setPost("Hello test user.. How are you?");
         post.setPostedBy("77");
         post.setPostId("1235");
@@ -97,8 +96,9 @@ class PostServiceImplTest {
 
     private Post updatePostRequest() {
         Post post = new Post();
+        User response = createOneUserDataToPost();
         post.setPost("Hello test user.. How are you? This is updated one");
-        post.setPostedBy("778");
+        post.setPostedBy(String.valueOf(response));
         post.setPostId("123");
         return post;
     }
@@ -108,8 +108,7 @@ class PostServiceImplTest {
         Post post1 = new Post();
         post1.setPostId("1");
         post1.setPost("Hi");
-        post1.setCreatedAt(LocalDateTime.now());
-        post1.setCreatedAt(LocalDateTime.now());
+
         return post1;
     }
 
@@ -148,16 +147,14 @@ class PostServiceImplTest {
         post.setPost("Hello test user.. How are you?");
         post.setPostedBy("53");
         post.setPostId("123");
-        post.setCreatedAt(LocalDateTime.now());
-        post.setUpdatedAt(LocalDateTime.now());
+
         lists.add(post);
 
         Post post2 = new Post();
         post2.setPost("Hello second test user.. How are you?");
         post2.setPostedBy("53");
         post2.setPostId("123");
-        post.setUpdatedAt(LocalDateTime.now());
-        post.setCreatedAt(LocalDateTime.now());
+
         lists.add(post2);
         return lists;
     }

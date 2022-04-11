@@ -26,6 +26,7 @@ import java.util.List;
 
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -58,6 +59,7 @@ class PostControllerTest {
                         .content(asJsonString(post))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isCreated());
     }
 
@@ -66,7 +68,7 @@ class PostControllerTest {
         User response = createOneUserDataToPost();
         post.setPost("post1");
         post.setPostedBy(response);
-        post.setPostId("100");
+        post.setPostId("123");
         return post;
     }
     private Post createNewPostRequest() {
@@ -101,6 +103,7 @@ class PostControllerTest {
                         .content(asJsonString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
     private List<PostDTO> getListOfPosts() {
@@ -123,7 +126,7 @@ class PostControllerTest {
     private Post updatePostRequest() {
         Post post = new Post();
         post.setPost("post for update");
-        post.setPostedBy("778");
+        post.setPostedBy("10");
         post.setPostId("123");
         return post;
     }
@@ -138,6 +141,7 @@ class PostControllerTest {
                         .content(asJsonString(postDetails))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 
@@ -152,6 +156,7 @@ class PostControllerTest {
                             .content(asJsonString(request))
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
+                    .andDo(print())
                     .andExpect(status().isOk());
         }
 
@@ -165,6 +170,7 @@ class PostControllerTest {
                         .content(asJsonString(postDetails))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
                 .andExpect(status().isOk());
     }
 }
